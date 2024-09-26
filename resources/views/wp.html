@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WP Posts</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .post-excerpt {
+            max-height: 100px;
+            overflow: hidden;
+        }
+
+        .img-cover {
+            max-height: 200px;
+            object-fit: cover;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container mt-5">
+        <iframe src="https://psga.uin-malang.ac.id/" frameborder="0" width="100%" height="500vh"></iframe>
+
+        <h1 class="text-center">Latest Posts</h1>
+        <div id="post-list" class="row">
+            <!-- Data will be loaded here -->
+        </div>
+    </div>
+
+    <script>
+        async function fetchPosts() {
+            const response = await fetch('https://psga.uin-malang.ac.id/wp-json/wp/v2/posts?per_page=100');
+            const posts = await response.json();
+
+            const postList = document.getElementById('post-list');
+
+            for (const post of posts) {
+                // Ambil featured_media jika ada
+                let mediaUrl = '';
+                if (post.featured_media !== 0) {
+                    try {
+                        const mediaResponse = await fetch(`https://psga.uin-malang.ac.id/wp-json/wp/v2/media/${post.featured_media}`);
+                        const media = await mediaResponse.json();
+                        mediaUrl = media.guid.rendered;
+                    } catch (error) {
+                        console.log(`Error fetching media for post ${post.id}:`, error);
+                    }
+                }
+
+                const postCard = `
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100">
+                        ${mediaUrl ? `<img src="${mediaUrl}" class="img-cover" alt="${post.title.rendered}">` : ''}
+                        <div class="card-body">
+                            <h5 class="card-title">${post.title.rendered}</h5>
+                            <p class="card-text post-excerpt">${post.excerpt.rendered.replace(/<[^>]*>/g, '')}</p>
+                        </div>
+                        <div class="card-footer">
+                            <a href="${post.link}" class="btn btn-primary">Read More</a>
+                        </div>
+                    </div>
+                </div>
+                `;
+                postList.innerHTML += postCard;
+            }
+        }
+
+        fetchPosts();
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

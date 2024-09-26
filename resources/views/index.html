@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chat Pelaporan</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    .chat-box {
+      height: 400px;
+      overflow-y: scroll;
+      padding: 15px;
+      border: 1px solid #ccc;
+      margin-bottom: 15px;
+    }
+    .chat-message {
+      margin-bottom: 10px;
+    }
+    .chat-message.user-message {
+      text-align: right;
+    }
+    .chat-message.system-message {
+      text-align: left;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container mt-5">
+    <div class="row justify-content-center">
+      <div class="col-md-6">
+        <h2 class="text-center">Laporan Chat Pelaporan</h2>
+
+        <!-- Chat Box -->
+        <div class="chat-box" id="chatBox"></div>
+
+        <!-- Input Field -->
+        <div class="input-group">
+          <input type="text" id="messageInput" class="form-control" placeholder="Ketik pesan...">
+          <div class="input-group-append">
+            <button class="btn btn-primary" onclick="sendMessage()">Kirim</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS and dependencies -->
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+  <!-- Custom JS -->
+  <script>
+    const chatBox = document.getElementById('chatBox');
+    const messageInput = document.getElementById('messageInput');
+
+    // Function to add message to chatbox
+    function addMessageToChatBox(message, user = true) {
+      const messageDiv = document.createElement('div');
+      messageDiv.classList.add('chat-message');
+      messageDiv.classList.add(user ? 'user-message' : 'system-message');
+      messageDiv.textContent = message;
+      chatBox.appendChild(messageDiv);
+      chatBox.scrollTop = chatBox.scrollHeight; // Auto scroll to the bottom
+    }
+
+    // Start the chat conversation
+    function startChat() {
+      fetch('/start-chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+      .then(response => response.json())
+      .then(data => {
+        addMessageToChatBox(data.message, false);
+      })
+      .catch(error => console.error('Error:', error));
+    }
+
+    // Send message function
+    function sendMessage() {
+      const message = messageInput.value;
+      if (message === '') return;
+
+      // Add user's message to the chat box
+      addMessageToChatBox(message, true);
+
+      // Send message to the server
+      fetch('/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ message: message }),
+      })
+      .then(response => response.json())
+      .then(data => {
+        // Add system response to the chat box
+        addMessageToChatBox(data.message, false);
+      })
+      .catch(error => console.error('Error:', error));
+
+      // Clear input
+      messageInput.value = '';
+    }
+
+    // Initialize chat
+    startChat();
+  </script>
+
+</body>
+</html>
