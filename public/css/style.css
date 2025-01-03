@@ -1,0 +1,64 @@
+body,
+html {
+    height: 100%;
+    margin: 0;
+    background-color: #f6f8fc;
+    font-family: 'Poppins';
+    height: 100vh;
+    overflow: hidden;
+}
+
+.root {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /*height: 100vh;*/
+    /*overflow: hidden;*/
+}
+
+.card-layout {
+    height: 82vh;
+}
+
+.borderless {
+    border: none;
+}
+
+.nav-link {
+    color: #9f9f9f;
+    border-radius: 10px;
+    text-decoration: none;
+}
+
+.nav-link:hover {
+    background-color: #296dff78;
+    color: #fff;
+    border-radius: 10px;
+}
+
+.nav-link.active {
+    background-color: #296eff;
+    border-radius: 10px;
+    color: #fff;
+}
+
+.nav-link:focus {
+    color: #9f9f9f;
+}
+
+.nav-link.active:focus {
+    color: #fff;
+}
+
+.nav-link:focus:hover {
+    color: #fff;
+}
+
+.nav-link.active:hover {
+    background-color: #296dffcf;
+    border-radius: 10px;
+}
+
+.scroll-vertical {
+    overflow-y: auto;
+}
