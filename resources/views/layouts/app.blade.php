@@ -17,6 +17,13 @@
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"> -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 
     @vite([])
     <style>
@@ -36,6 +43,11 @@
             align-items: center;
             /*height: 100vh;*/
             /*overflow: hidden;*/
+        }
+
+        #map {
+            height: 100vh;
+            width: 100%;
         }
 
         .card-layout {
@@ -132,6 +144,27 @@
             margin-left: 10px;
             margin-top: 16px;
         }
+
+        .responsive-width {
+            max-width: 25vw;
+            /* Default untuk perangkat mobile */
+        }
+
+        @media (min-width: 576px) {
+
+            /* Tablet (Small devices - 576px ke atas) */
+            .responsive-width {
+                max-width: 14vw;
+            }
+        }
+
+        @media (min-width: 992px) {
+
+            /* Desktop (Large devices - 992px ke atas) */
+            .responsive-width {
+                max-width: 7vw;
+            }
+        }
     </style>
 </head>
 
@@ -182,7 +215,7 @@
 
         <div class="row w-100">
 
-            <div class="col-1" style="width: 6.5vw;">
+            <div class="col-12 col-sm-2 col-md-1 responsive-width">
                 <div class="card card-layout borderless shadow" style="border-radius: 15px;">
                     <div class="container-fluid text-center">
                         <!-- <a href="#">
@@ -203,12 +236,12 @@
                                         <i class="fa-solid fa-pen"></i>
                                     </a>
                                 </li>
-                                <li class="nav-item mb-2">
+                                {{-- <li class="nav-item mb-2">
                                     <a href="/chat" class="nav-link" data-bs-toggle="tooltip"
                                         data-bs-placement="right" data-bs-title="Pesan">
                                         <i class="fa-solid fa-comment-dots"></i>
                                     </a>
-                                </li>
+                                </li> --}}
                                 <li class="nav-item mb-2">
                                     <a href="/riwayat" class="nav-link" data-bs-toggle="tooltip"
                                         data-bs-placement="right" data-bs-title="Riwayat Pengaduan">
