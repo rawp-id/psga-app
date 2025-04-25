@@ -19,9 +19,13 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+<<<<<<< HEAD
             $table->string('number_phone')->nullable();
             $table->string('otp')->nullable();
             $table->timestamp('otp_expired')->nullable();
+=======
+            $table->string('address')->nullable();
+>>>>>>> ca2c3a99934e1620379bf0e611a2a8134cade92b
             $table->rememberToken();
             $table->timestamps();
         });
