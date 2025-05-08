@@ -112,9 +112,9 @@
                                 let selectedMarker; // Marker for selected location
 
                                 // Add OpenStreetMap tiles
-                                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                                    maxZoom: 19,
-                                    attribution: '© OpenStreetMap contributors'
+                                L.tileLayer('http://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
+                                    maxZoom: 20,
+                                    subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
                                 }).addTo(map);
 
                                 // Function to update the user's current location
@@ -170,7 +170,7 @@
                                     }
 
                                     // Fetch suggestions from Nominatim API
-                                    // fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`)
+                                    fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`)
                                         .then((response) => response.json())
                                         .then((data) => {
                                             // Clear previous suggestions
