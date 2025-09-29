@@ -30,15 +30,15 @@ class DatabaseSeeder extends Seeder
             \App\Models\Role::create($role);
         }
 
-        // User::create([
-        //     'google_id' => 116200948077420596486,
-        //     'name' => 'Rifky Aryo',
-        //     'email' => '220605110052@student.uin-malang.ac.id',
-        //     'number_phone' => '6285794433959',
-        //     'otp' => rand(100000, 999999),
-        //     'email_verified_at' => now(),
-        //     'is_admin' => true,
-        //     'password' => bcrypt('password'),
-        // ]);
+        User::create([
+            'google_id' => 116200948077420596486,
+            'name' => 'Rifky Aryo',
+            'email' => '220605110052@student.uin-malang.ac.id',
+            'number_phone' => '6285794433959',
+            'otp' => rand(100000, 999999),
+            'email_verified_at' => now(),
+            'is_admin' => true,
+            'password' => bcrypt('password'),
+        ]);
     }
 }
