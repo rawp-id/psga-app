@@ -1,8 +1,14 @@
 <?php
 
+use GuzzleHttp\Middleware;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ChatController;
+use App\Http\Controllers\RiwayatController;
+use App\Http\Controllers\PelaporanController;
+use App\Http\Controllers\PengaduanController;
+use App\Http\Middleware\AdminMiddleware;
+use App\Models\Role;
 
 Route::get('/', function () {
     return view('home');
@@ -14,7 +20,7 @@ Route::get('/home', function () {
 
 Route::get('/login', function () {
     return view('auth.login');
-});
+})->name('login');
 
 Route::get('/register', function () {
     return view('register');
@@ -52,25 +58,29 @@ Route::get('/chat', function () {
     return view('chat.index');
 });
 
-Route::get('/layanan', function () {
-    return view('layanan.index');
-});
+Route::middleware(['auth'])->group(function () {
+    Route::get('/layanan', function () {
+        return view('layanan.index');
+    })->name('layanan.index');
 
-Route::get('/layanan/pelaporan', function () {
-    return view('layanan.pelaporan');
-});
+    Route::get('/layanan/pelaporan', [PelaporanController::class, 'create'])->name('pelaporans.create');
+    Route::post('/layanan/pelaporan', [PelaporanController::class, 'store'])->name('pelaporans.store');
 
-Route::get('/layanan/pengaduan', function () {
-    return view('layanan.pengaduan');
-});
+    Route::get('/layanan/pengaduan', [PengaduanController::class, 'create'])->name('pengaduans.create');
+    Route::post('/layanan/pengaduan', [PengaduanController::class, 'store'])->name('pengaduans.store');
 
-Route::get('/riwayat', function () {
-    return view('riwayat.index');
+    Route::get('/riwayat', [RiwayatController::class, 'index'])->name('riwayat.index');
+    Route::get('/riwayat/pelaporan/{id}', [RiwayatController::class, 'showPelaporan'])->name('riwayat.showPelaporan');
+    Route::get('/riwayat/pengaduan/{id}', [RiwayatController::class, 'showPengaduan'])->name('riwayat.showPengaduan');
+
+    // Route::middleware(['role:admin'])->group(function () {
+    // });
 });
 
 Route::get('auth/google', [AuthController::class, 'redirectToGoogle']);
 Route::get('auth/google/callback', [AuthController::class, 'handleGoogleCallback']);
 Route::post('logout', [AuthController::class, 'logout'])->name('logout');
+Route::get('/logout', [AuthController::class, 'logout']);
 
 Route::post('/send-message', [ChatController::class, 'sendMessage']);
 Route::get('/messages', function () {
@@ -90,3 +100,24 @@ Route::post('/send-otp', [AuthController::class, 'register_number_phone']);
 Route::post('/resend-otp', [AuthController::class, 'resend_otp']);
 
 Route::post('/confirm-otp', [AuthController::class, 'confirm_otp']);
+
+Route::prefix('admin')->name('admin.')->middleware(AdminMiddleware::class)->group(function () {
+    Route::get('/', function () {
+        return view('admin.dashboard');
+    })->name('dashboard');
+    
+    Route::resource('roles', App\Http\Controllers\Admin\RoleController::class)->except(['show']);
+
+    Route::get('/riwayat', [App\Http\Controllers\Admin\RiwayatController::class, 'index'])->name('riwayat.index');
+    Route::get('/riwayat/pelaporan/{id}', [App\Http\Controllers\Admin\RiwayatController::class, 'showPelaporan'])->name('riwayat.showPelaporan');
+    Route::get('/riwayat/pengaduan/{id}', [App\Http\Controllers\Admin\RiwayatController::class, 'showPengaduan'])->name('riwayat.showPengaduan');
+    Route::patch('/riwayat/pelaporan/{id}/update-status', [App\Http\Controllers\Admin\RiwayatController::class, 'updatePelaporanStatus'])->name('riwayat.updatePelaporanStatus');
+    Route::patch('/riwayat/pengaduan/{id}/update-status', [App\Http\Controllers\Admin\RiwayatController::class, 'updatePengaduanStatus'])->name('riwayat.updatePengaduanStatus');
+
+    Route::get('/users', [App\Http\Controllers\Admin\UserController::class, 'index'])->name('users.index');
+    Route::patch('/users/{user}/update-admin', [App\Http\Controllers\Admin\UserController::class, 'updateAdmin'])->name('users.updateAdmin');
+    Route::patch('/users/{user}/update-konsultan', [App\Http\Controllers\Admin\UserController::class, 'updateKonsultan'])->name('users.updateKonsultan');
+
+    Route::resource('konsultasi-pelaporans', App\Http\Controllers\KonsultasiPelaporanController::class);
+    Route::resource('konsultasi-pengaduans', App\Http\Controllers\KonsultasiPengaduanController::class);
+});

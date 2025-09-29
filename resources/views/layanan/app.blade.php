@@ -1,11 +1,12 @@
 @extends('layouts.app')
 @section('content')
-<div class="row">
-    <div class="col-3">
+<div class="row flex-column flex-md-row">
+    <div class="col-12 col-md-3 mb-3 mb-md-0">
         <div class="card card-layout borderless shadow" style="border-radius: 15px;">
             <div class="container mt-3 scroll-vertical">
-                <span class="fw-semibold ms-2 d-flex align-items-center" style="font-size: 13px;"><i
-                        class="fa-solid fa-hand-holding-heart fs-6 me-1"></i> Layanan Pengaduan</span>
+                <span class="fw-semibold ms-2 d-flex align-items-center" style="font-size: 13px;">
+                    <i class="fa-solid fa-hand-holding-heart fs-6 me-1"></i> Layanan Pengaduan
+                </span>
                 <hr>
                 <div class="mb-3">
                     <a href="/layanan/pelaporan" class="text-decoration-none text-dark">
@@ -43,12 +44,12 @@
                         </div>
                     </div>
                 </a> --}}
-                <br><br><br><br>
+                {{-- <br><br><br><br> --}}
             </div>
         </div>
     </div>
 
-    <div class="col">
+    <div class="col-12 col-md">
         @yield('layanan')
         {{-- <div class="card card-layout borderless shadow" style="border-radius: 15px;">
             <div class="card-header" style="background-color: transparent;">
@@ -69,5 +70,6 @@
             </div>
         </div> --}}
     </div>
+    <div class="mb-5 mobile"></div>
 </div>
 @endsection

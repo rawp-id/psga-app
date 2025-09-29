@@ -73,7 +73,7 @@ class AuthController extends Controller
 
         try {
             curl_setopt_array($curl, array(
-                CURLOPT_URL => 'https://app.saungwa.com/api/create-message',
+                CURLOPT_URL => 'https://api.fonnte.com/send',
                 CURLOPT_RETURNTRANSFER => true,
                 CURLOPT_ENCODING => '',
                 CURLOPT_MAXREDIRS => 10,
@@ -82,17 +82,33 @@ class AuthController extends Controller
                 CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
                 CURLOPT_CUSTOMREQUEST => 'POST',
                 CURLOPT_POSTFIELDS => array(
-                    'appkey' => config('otp.app_key'),
-                    'authkey' => config('otp.auth_key'),
-                    'to' => $number_phone,
-                    'template_id' => '6aa829ff-74c5-4778-be4c-432bbca981a5',
-                    'variables[{otp}]' => $otp
-                )
+                    'target' => $number_phone,
+                    'message' => "Your OTP : " . $otp,
+                    'countryCode' => '62',
+                ),
+                CURLOPT_HTTPHEADER => array(
+                    'Authorization: ' . config('otp.key')
+                ),
             ));
 
             $response = curl_exec($curl);
-
+            if (curl_errno($curl)) {
+                $error_msg = curl_error($curl);
+            }
             curl_close($curl);
+
+            if (isset($error_msg)) {
+                notyf()->error('Gagal mengirim OTP: ' . $error_msg);
+                return redirect('/otp');
+            }
+
+            $responseObj = json_decode($response);
+
+            if (!is_object($responseObj) || !isset($responseObj->status) || $responseObj->status != 'success') {
+                $message = isset($responseObj->message) ? $responseObj->message : 'Unknown error';
+                notyf()->error("Gagal mengirim OTP: {$message}");
+                return redirect('/otp');
+            }
 
             $user = User::find(Auth::user()->id);
 
@@ -141,7 +157,7 @@ class AuthController extends Controller
 
             try {
                 curl_setopt_array($curl, array(
-                    CURLOPT_URL => 'https://app.saungwa.com/api/create-message',
+                    CURLOPT_URL => 'https://api.fonnte.com/send',
                     CURLOPT_RETURNTRANSFER => true,
                     CURLOPT_ENCODING => '',
                     CURLOPT_MAXREDIRS => 10,
@@ -150,17 +166,33 @@ class AuthController extends Controller
                     CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
                     CURLOPT_CUSTOMREQUEST => 'POST',
                     CURLOPT_POSTFIELDS => array(
-                        'appkey' => config('otp.app_key'),
-                        'authkey' => config('otp.auth_key'),
-                        'to' => $number_phone,
-                        'template_id' => '6aa829ff-74c5-4778-be4c-432bbca981a5',
-                        'variables[{otp}]' => $otp
-                    )
+                        'target' => $number_phone,
+                        'message' => "Your OTP : " . $otp,
+                        'countryCode' => '62',
+                    ),
+                    CURLOPT_HTTPHEADER => array(
+                        'Authorization: ' . config('otp.key')
+                    ),
                 ));
 
                 $response = curl_exec($curl);
-
+                if (curl_errno($curl)) {
+                    $error_msg = curl_error($curl);
+                }
                 curl_close($curl);
+
+                if (isset($error_msg)) {
+                    notyf()->error('Gagal mengirim OTP: ' . $error_msg);
+                    return redirect('/otp/verify');
+                }
+
+                $responseObj = json_decode($response);
+
+                if (!is_object($responseObj) || !isset($responseObj->status) || $responseObj->status != 'success') {
+                    $message = isset($responseObj->message) ? $responseObj->message : 'Unknown error';
+                    notyf()->error("Gagal mengirim OTP: {$message}");
+                    return redirect('/otp/verify');
+                }
 
                 $user = User::find(Auth::user()->id);
 

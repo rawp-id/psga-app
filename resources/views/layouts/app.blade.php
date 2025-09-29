@@ -34,7 +34,15 @@
             background-color: #f6f8fc;
             font-family: 'Poppins';
             height: 100vh;
-            overflow: hidden;
+            /* overflow: hidden; */
+        }
+
+        @media (max-width: 575.98px) {
+
+            body,
+            html {
+                overflow: auto;
+            }
         }
 
         .root {
@@ -52,6 +60,13 @@
 
         .card-layout {
             height: 82vh;
+        }
+
+        @media (max-width: 575.98px) {
+            .card-layout {
+                height: auto;
+                /* min-height: 60vh; */
+            }
         }
 
         .borderless {
@@ -165,6 +180,26 @@
                 max-width: 7vw;
             }
         }
+
+        @media (max-width: 991.98px) {
+            .desktop {
+                display: none !important;
+            }
+
+            /* .scroll-vertical {
+            overflow-y: visible !important;
+            } */
+        }
+
+        @media (min-width: 576px) {
+            .mobile {
+                display: none !important;
+            }
+
+            /* .scroll-vertical {
+                    overflow-y: auto !important;
+                } */
+        }
     </style>
 </head>
 
@@ -173,41 +208,112 @@
         <div class="card shadow borderless mt-3 mb-3" style="height: 10vh; width: 97vw; border-radius: 15px;">
             <div class="container-fluid" style="margin-top: 12px;">
                 <div class="row">
-                    <div class="col">
-                        <a href="/" class="text-decoration-none text-dark">
-                            <div class="row">
-                                <div class="col-2">
-                                    <img src="{{ asset('/images/psga-logo.jpg') }}" alt="logo" class="border"
-                                        width="50vh" style="border-radius: 50px;">
-                                </div>
-                                <div class="col d-flex justify-content-start align-items-center"
-                                    style="margin-left: -60px;">
-                                    <div class="d-flex flex-column">
-                                        <span class="fs-4 fw-semibold" style="letter-spacing: 2px;">PSGA MALIKI
-                                            APPS</span>
-                                        <span class="fw-lighe" style="font-size: 10px; letter-spacing: 1px;">No more
-                                            silence,
-                                            stop the violence</span>
-                                        <!-- <span class="fw-lighe" style="font-size: 10px; letter-spacing: 2px;">Powered by PSGA</span> -->
-                                    </div>
+                    <div class="col d-flex justify-content-start align-items-center gap-1">
+                        <button class="btn mobile" type="button" data-bs-toggle="offcanvas"
+                            data-bs-target="#offcanvasExample" style="border-radius: 100%">
+                            <i class="bi bi-list"></i>
+                        </button>
+                        <a href="/" class="text-decoration-none text-dark d-flex align-items-center gap-2">
+                            <img src="{{ asset('/images/psga-logo.jpg') }}" alt="logo" class="border" width="50"
+                                style="border-radius: 50px;">
+                            <div class="desktop">
+                                <div class="d-flex flex-column">
+                                    <span class="fs-4 fw-semibold" style="letter-spacing: 2px;">PSGA MALIKI APP</span>
+                                    <span class="fw-light" style="font-size: 10px; letter-spacing: 1px;">No more
+                                        silence, stop the violence</span>
                                 </div>
                             </div>
                         </a>
                     </div>
                     <div class="col d-flex justify-content-end align-items-center me-2">
-                        @guest
-                            <a href="/login" class="btn btn-outline-secondary me-2" style="border-radius: 12px">
-                                <i class="fa-solid fa-right-to-bracket"></i> Login
-                            </a>
-                        @endguest
-                        @auth
-                            <a href="/" class="btn btn-outline-secondary" style="border-radius: 12px">
-                                <i class="fa-solid fa-right-to-bracket"></i> Logout
-                            </a>
-                        @endauth
+                        <div class="desktop">
+                            @guest
+                                <a href="/login" class="btn btn-outline-secondary me-2" style="border-radius: 12px">
+                                    <i class="fa-solid fa-right-to-bracket"></i> Login
+                                </a>
+                            @endguest
+                            @auth
+                                <form action="{{ route('logout') }}" method="POST" class="d-inline">
+                                    @csrf
+                                    <button type="submit" class="btn btn-outline-secondary" style="border-radius: 12px">
+                                        <i class="fa-solid fa-right-to-bracket"></i> Logout
+                                    </button>
+                                </form>
+                            @endauth
+                        </div>
+                        <div class="mobile">
+                            <h3>PSGA APP</h3>
+                        </div>
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="offcanvasExampleLabel">PSGA MALIKI APPS</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+            <div>
+                <p>Welcome to PSGA MALIKI APPS</p>
+            </div>
+            <nav>
+                <ul class="nav flex-column">
+                    <li class="nav-item mb-2">
+                        <a href="/" class="nav-link" data-bs-toggle="tooltip" data-bs-placement="right"
+                            data-bs-title="Beranda">
+                            <i class="fa-solid fa-house"></i> Beranda
+                        </a>
+                    </li>
+                    <li class="nav-item mb-2">
+                        <a href="/layanan" class="nav-link" data-bs-toggle="tooltip" data-bs-placement="right"
+                            data-bs-title="Pengaduan">
+                            <i class="fa-solid fa-pen"></i> Pengaduan
+                        </a>
+                    </li>
+                    {{-- <li class="nav-item mb-2">
+                        <a href="/chat" class="nav-link" data-bs-toggle="tooltip" data-bs-placement="right"
+                            data-bs-title="Pesan">
+                            <i class="fa-solid fa-comment-dots"></i> Pesan
+                        </a>
+                    </li> --}}
+                    <li class="nav-item mb-2">
+                        <a href="/riwayat" class="nav-link" data-bs-toggle="tooltip" data-bs-placement="right"
+                            data-bs-title="Riwayat Pengaduan">
+                            <i class="fa-solid fa-clock-rotate-left"></i> Riwayat Pengaduan
+                        </a>
+                    </li>
+                    @if (Auth::check() && Auth::user()->is_admin == 1)
+                        {{-- <li class="nav-item mb-2">
+                            <a href="/admin" class="nav-link" data-bs-toggle="tooltip" data-bs-placement="right"
+                                data-bs-title="Admin Dashboard">
+                                <i class="fa-solid fa-user-shield"></i> Admin Dashboard
+                            </a>
+                        </li> --}}
+
+                        <li class="nav-item mb-2">
+                            <a href="{{ route('admin.users.index') }}" class="nav-link" data-bs-toggle="tooltip"
+                                data-bs-placement="right" data-bs-title="Kelola Pengguna">
+                                <i class="fa-solid fa-users"></i> Kelola Pengguna
+                            </a>
+                        </li>
+                        <li class="nav-item mb-2">
+                            <a href="{{ route('admin.roles.index') }}" class="nav-link" data-bs-toggle="tooltip"
+                                data-bs-placement="right" data-bs-title="Kelola Role">
+                                <i class="fa-solid fa-user-tag"></i> Kelola Role
+                            </a>
+                        </li>
+                        <li class="nav-item mb-2">
+                            <a href="{{ route('admin.riwayat.index') }}" class="nav-link" data-bs-toggle="tooltip"
+                                data-bs-placement="right" data-bs-title="Riwayat Admin">
+                                <i class="fa-solid fa-clock"></i> Riwayat Admin
+                            </a>
+                        </li>
+                    @endif
+                </ul>
+            </nav>
         </div>
     </div>
 
@@ -215,7 +321,7 @@
 
         <div class="row w-100">
 
-            <div class="col-12 col-sm-2 col-md-1 responsive-width">
+            <div class="col-12 col-sm-2 col-md-1 responsive-width desktop">
                 <div class="card card-layout borderless shadow" style="border-radius: 15px;">
                     <div class="container-fluid text-center">
                         <!-- <a href="#">
@@ -248,6 +354,47 @@
                                         <i class="fa-solid fa-clock-rotate-left"></i>
                                     </a>
                                 </li>
+                                @if (Auth::check() && Auth::user()->is_admin == 1)
+                                    {{-- <li class="nav-item mb-2">
+                                        <a href="/admin" class="nav-link" data-bs-toggle="tooltip"
+                                            data-bs-placement="right" title="Admin Dashboard">
+                                            <i class="fa-solid fa-user-shield"></i>
+                                        </a>
+                                    </li> --}}
+                                    <li class="nav-item mb-2">
+                                        <a href="{{ route('admin.users.index') }}" class="nav-link"
+                                            data-bs-toggle="tooltip" data-bs-placement="right"
+                                            title="Kelola Pengguna">
+                                            <i class="fa-solid fa-users"></i>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item mb-2">
+                                        <a href="{{ route('admin.roles.index') }}" class="nav-link"
+                                            data-bs-toggle="tooltip" data-bs-placement="right" title="Kelola Role">
+                                            <i class="fa-solid fa-user-tag"></i>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item mb-2">
+                                        <a href="{{ route('admin.riwayat.index') }}" class="nav-link"
+                                            data-bs-toggle="tooltip" data-bs-placement="right" title="Riwayat Admin">
+                                            <i class="fa-solid fa-clock"></i>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item mb-2">
+                                        <a href="{{ route('admin.konsultasi-pelaporans.index') }}" class="nav-link"
+                                            data-bs-toggle="tooltip" data-bs-placement="right"
+                                            title="Konsultasi Pelaporan">
+                                            <i class="fa-solid fa-comments"></i>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item mb-2">
+                                        <a href="{{ route('admin.konsultasi-pengaduans.index') }}" class="nav-link"
+                                            data-bs-toggle="tooltip" data-bs-placement="right"
+                                            title="Konsultasi Pengaduan">
+                                            <i class="fa-solid fa-comment-medical"></i>
+                                        </a>
+                                    </li>
+                                @endif
                             </ul>
                         </nav>
                     </div>

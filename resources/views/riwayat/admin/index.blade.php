@@ -66,7 +66,7 @@
                                         @endif
                                     </td>
                                     <td>
-                                        <a href="{{ route('riwayat.showPelaporan', $pelaporan->id) }}" class="btn btn-outline-primary">Detail</a>
+                                        <a href="{{ route('admin.riwayat.showPelaporan', $pelaporan->id) }}" class="btn btn-outline-primary">Detail</a>
                                     </td>
                                 </tr>
                             @endforeach
@@ -95,7 +95,7 @@
                                         @endif
                                     </td>
                                     <td>
-                                        <a href="{{ route('riwayat.showPengaduan', $pengaduan->id) }}" class="btn btn-outline-primary">Detail</a>
+                                        <a href="{{ route('admin.riwayat.showPengaduan', $pengaduan->id) }}" class="btn btn-outline-primary">Detail</a>
                                     </td>
                                 </tr>
                             @endforeach
