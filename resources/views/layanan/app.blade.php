@@ -58,7 +58,7 @@
     @media (min-width: 992px) {
         .sticky-sidebar {
             position: sticky;
-            /* top: 5px; */
+            top: 0.5px;
             z-index: 10;
         }
         
