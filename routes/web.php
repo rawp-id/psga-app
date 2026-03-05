@@ -5,6 +5,8 @@ use GuzzleHttp\Middleware;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ChatController;
+use App\Http\Controllers\EducationController;
+use App\Http\Controllers\PanicController;
 use App\Http\Controllers\RiwayatController;
 use App\Http\Controllers\PelaporanController;
 use App\Http\Controllers\PengaduanController;
@@ -60,6 +62,9 @@ Route::get('/chat', function () {
     return view('chat.index');
 });
 
+Route::get('/edukasi', [EducationController::class, 'index'])->name('education.index');
+Route::get('/edukasi/{slug}', [EducationController::class, 'show'])->name('education.show');
+
 Route::middleware(['auth'])->group(function () {
     Route::get('/layanan', function () {
         return view('layanan.index');
@@ -78,8 +83,12 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
     Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
 
-    // Route::middleware(['role:admin'])->group(function () {
-    // });
+    Route::get('/panic-button', function () {
+        return view('panic.index');
+    })->name('panic-button');
+
+    Route::post('/panic/trigger', [PanicController::class, 'trigger'])->name('panic.trigger');
+
 });
 
 Route::get('auth/google', [AuthController::class, 'redirectToGoogle']);
@@ -108,7 +117,7 @@ Route::post('/confirm-otp', [AuthController::class, 'confirm_otp']);
 
 Route::prefix('admin')->name('admin.')->middleware(AdminMiddleware::class)->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
-    
+
     Route::resource('roles', App\Http\Controllers\Admin\RoleController::class)->except(['show']);
 
     Route::get('/riwayat', [App\Http\Controllers\Admin\RiwayatController::class, 'index'])->name('riwayat.index');
@@ -123,4 +132,10 @@ Route::prefix('admin')->name('admin.')->middleware(AdminMiddleware::class)->grou
 
     Route::resource('konsultasi-pelaporans', App\Http\Controllers\KonsultasiPelaporanController::class);
     Route::resource('konsultasi-pengaduans', App\Http\Controllers\KonsultasiPengaduanController::class);
+
+    Route::resource('education', App\Http\Controllers\Admin\EducationController::class);
+
+    Route::get('/panic/resolve/{id}', [PanicController::class, 'resolveAlert'])->name('panic.resolve');
+    Route::get('/panic-history', [PanicController::class, 'show'])->name('panic.index');
+
 });

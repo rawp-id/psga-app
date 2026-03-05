@@ -137,6 +137,32 @@
         .dropdown-item:active {
             background-color: var(--psga-blue);
         }
+
+        /* Sidebar Styling */
+        .sidebar-card {
+            background: white;
+            border-radius: 24px;
+            padding: 1.5rem 0.8rem;
+            height: calc(100vh - 140px);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            /* Ubah dari space-between agar icon rapat ke atas */
+            overflow-y: auto;
+            /* Izinkan scroll vertikal */
+            scrollbar-width: none;
+            /* Sembunyikan scrollbar di Firefox */
+        }
+
+        /* Sembunyikan scrollbar di Chrome, Safari, dan Opera */
+        .sidebar-card::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* Tambahkan margin bawah pada nav agar tidak mepet dasar saat di-scroll */
+        .sidebar-card nav {
+            margin-bottom: 20px;
+        }
     </style>
 </head>
 
@@ -179,6 +205,11 @@
                             <i class="fa-solid fa-house"></i>
                         </a>
 
+                        <a href="/edukasi" class="nav-link {{ request()->is('edukasi*') ? 'active' : '' }}"
+                            data-bs-toggle="tooltip" title="Edukasi">
+                            <i class="fa-solid fa-graduation-cap"></i>
+                        </a>
+
                         <a href="/layanan" class="nav-link {{ request()->is('layanan*') ? 'active' : '' }}"
                             data-bs-toggle="tooltip" title="Buat Laporan">
                             <i class="fa-solid fa-pen-nib"></i>
@@ -187,6 +218,11 @@
                         <a href="/riwayat" class="nav-link {{ request()->is('riwayat*') ? 'active' : '' }}"
                             data-bs-toggle="tooltip" title="Riwayat">
                             <i class="fa-solid fa-clock-rotate-left"></i>
+                        </a>
+
+                        <a href="/panic-button" class="nav-link {{ request()->is('panic-button') ? 'active' : '' }}"
+                            data-bs-toggle="tooltip" title="Panic Button">
+                            <i class="fa-solid fa-triangle-exclamation"></i>
                         </a>
 
                         @if (Auth::check() && Auth::user()->is_admin == 1)
@@ -219,13 +255,28 @@
                             <a href="{{ route('admin.konsultasi-pengaduans.index') }}"
                                 class="nav-link {{ request()->is('admin/konsultasi-pengaduans*') ? 'active' : '' }}"
                                 data-bs-toggle="tooltip" title="Konsultasi Pengaduan">
-                                <i class="fa-solid fa-headset"></i> </a>
+                                <i class="fa-solid fa-headset"></i>
+                            </a>
+
+                            <a href="{{ route('admin.education.index') }}"
+                                class="nav-link {{ request()->is('admin/educations*') ? 'active' : '' }}"
+                                data-bs-toggle="tooltip" title="Manajemen Edukasi">
+                                <i class="fa-solid fa-graduation-cap"></i>
+                            </a>
+
+                            <a href="{{ route('admin.panic.index') }}"
+                                class="nav-link {{ request()->is('admin/panic-history*') ? 'active' : '' }}"
+                                data-bs-toggle="tooltip" title="Riwayat Panic Button">
+                                <i class="fa-solid fa-triangle-exclamation"></i>
+                            </a>
                         @endif
                     </nav>
 
+                    <hr>
+
                     <a href="{{ route('profile.index') }}"
-                        class="nav-link {{ request()->routeIs('profile.*') ? 'active' : '' }}" data-bs-toggle="tooltip"
-                        title="Profil">
+                        class="nav-link {{ request()->routeIs('profile.*') ? 'active' : '' }}"
+                        data-bs-toggle="tooltip" title="Profil">
                         <i class="fa-solid fa-user"></i>
                     </a>
 
@@ -249,6 +300,9 @@
             <div class="d-flex flex-column gap-2">
                 <a href="/" class="offcanvas-nav-link {{ request()->is('/') ? 'active' : '' }}">
                     <i class="fa-solid fa-house"></i> Beranda
+                </a>
+                <a href="/edukasi" class="offcanvas-nav-link {{ request()->is('edukasi*') ? 'active' : '' }}">
+                    <i class="fa-solid fa-graduation-cap"></i> Edukasi
                 </a>
                 <a href="/layanan" class="offcanvas-nav-link {{ request()->is('layanan*') ? 'active' : '' }}">
                     <i class="fa-solid fa-pen-nib"></i> Buat Laporan
@@ -283,6 +337,16 @@
                         class="offcanvas-nav-link {{ request()->is('admin/konsultasi*') ? 'active' : '' }}">
                         <i class="fa-solid fa-comment-dots"></i> Data Konsultasi
                     </a>
+
+                    <a href="{{ route('admin.education.index') }}"
+                        class="offcanvas-nav-link {{ request()->is('admin/educations*') ? 'active' : '' }}">
+                        <i class="fa-solid fa-graduation-cap"></i> Manajemen Edukasi
+                    </a>
+
+                    <a href="{{ route('admin.panic.index') }}"
+                        class="offcanvas-nav-link {{ request()->is('admin/panic-history*') ? 'active' : '' }}">
+                        <i class="fa-solid fa-triangle-exclamation"></i> Riwayat Panic Button
+                    </a>
                 @endif
 
                 <hr>
@@ -315,6 +379,187 @@
             // });
         });
     </script>
+
+    <style>
+        .swal-emergency-popup {
+            border: 4px solid #dc3545 !important;
+            border-radius: 20px !important;
+            box-shadow: 0 0 40px rgba(220, 53, 69, 0.5) !important;
+        }
+
+        .swal-emergency-title {
+            color: #dc3545 !important;
+            font-size: 2rem !important;
+            font-weight: 800 !important;
+            letter-spacing: 1px;
+            animation: pulse-text 1s infinite alternate;
+        }
+
+        @keyframes pulse-text {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+
+            100% {
+                transform: scale(1.05);
+                opacity: 0.8;
+                color: #842029 !important;
+            }
+        }
+
+        .btn-lacak-maps {
+            background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%);
+            border: none;
+            padding: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: all 0.3s;
+        }
+
+        .btn-lacak-maps:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(13, 110, 253, 0.4);
+        }
+
+        .swal-icon-sos {
+            border: none !important;
+            font-size: 5rem;
+            margin-bottom: 0;
+            animation: shake 0.5s infinite;
+        }
+
+        @keyframes shake {
+            0% {
+                transform: translateX(0);
+            }
+
+            25% {
+                transform: translateX(-5px);
+            }
+
+            50% {
+                transform: translateX(5px);
+            }
+
+            75% {
+                transform: translateX(-5px);
+            }
+
+            100% {
+                transform: translateX(0);
+            }
+        }
+    </style>
+
+    <script src="https://js.pusher.com/8.0/pusher.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/laravel-echo@1.16.0/dist/echo.iife.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        @if (Auth::check() && Auth::user()->is_admin)
+            // 1. Setup Audio
+            const sirenSound = new Audio('https://assets.mixkit.co/active_storage/sfx/995/995-preview.mp3');
+            sirenSound.loop = true;
+
+            // 2. Meminta Izin Interaksi dari Admin (Autoplay Unlocker)
+            // Ini akan muncul setiap admin merefresh atau membuka dashboard
+            // window.addEventListener('load', function() {
+            //     Swal.fire({
+            //         title: '<i class="bi bi-volume-up-fill text-primary"></i><br>Izin Notifikasi Suara',
+            //         text: 'Untuk memastikan Anda mendengar sirine saat ada panggilan darurat, mohon aktifkan suara peringatan.',
+            //         showCancelButton: true,
+            //         confirmButtonText: 'Aktifkan Suara',
+            //         cancelButtonText: 'Bisu (Mute)',
+            //         confirmButtonColor: '#296eff',
+            //         allowOutsideClick: false
+            //     }).then((result) => {
+            //         if (result.isConfirmed) {
+            //             // Trik: Mainkan lalu pause secepat kilat. Ini akan 'membuka gembok' audio browser.
+            //             sirenSound.play().then(() => {
+            //                 sirenSound.pause();
+            //                 sirenSound.currentTime = 0;
+
+            //                 // Beri notifikasi kecil di pojok kanan
+            //                 Swal.fire({
+            //                     toast: true,
+            //                     position: 'top-end',
+            //                     icon: 'success',
+            //                     title: 'Suara Peringatan Aktif',
+            //                     showConfirmButton: false,
+            //                     timer: 3000
+            //                 });
+            //             }).catch(e => console.log("Gagal memicu audio."));
+            //         }
+            //     });
+            // });
+
+            // 3. Inisialisasi Echo dengan Pusher
+            window.Echo = new Echo({
+                broadcaster: 'pusher',
+                key: '{{ env('PUSHER_APP_KEY') }}',
+                cluster: '{{ env('PUSHER_APP_CLUSTER') }}',
+                forceTLS: true
+            });
+
+            // 4. Mendengarkan siaran darurat
+            window.Echo.channel('emergency-channel')
+                .listen('.panic.triggered', (e) => {
+                    let alertData = e.alert;
+
+                    // Mainkan sirine (Sekarang pasti bunyi karena sudah diizinkan di awal)
+                    sirenSound.play().catch(err => {
+                        console.log(
+                            "Audio tetap diblokir. Pastikan Admin mengeklik 'Aktifkan Suara' saat popup muncul."
+                        );
+                    });
+
+                    // Tampilkan Popup Darurat dengan UI Baru yang Lebih Keren
+                    Swal.fire({
+                        title: 'D A R U R A T !',
+                        iconHtml: '<div class="swal-icon-sos">🆘</div>',
+                        customClass: {
+                            popup: 'swal-emergency-popup',
+                            title: 'swal-emergency-title',
+                            icon: 'border-0'
+                        },
+                        html: `
+                            <div class="mt-2 mb-4 bg-light p-3 rounded-4 border">
+                                <h4 class="fw-bold text-dark mb-1">${alertData.user.name}</h4>
+                                <p class="text-danger fw-medium mb-2">Telah menekan tombol bahaya!</p>
+                                <div class="badge bg-secondary mb-3"><i class="bi bi-clock"></i> Waktu: ${new Date(alertData.created_at).toLocaleTimeString()}</div>
+                                
+                                <a href="https://www.google.com/maps?q=${alertData.latitude},${alertData.longitude}" target="_blank" class="btn btn-lacak-maps text-white w-100 rounded-pill">
+                                    <i class="bi bi-geo-alt-fill me-2"></i> Buka Titik Lokasi di Maps
+                                </a>
+                            </div>
+                        `,
+                        background: '#ffffff',
+                        showCancelButton: true,
+                        confirmButtonColor: '#dc3545',
+                        cancelButtonColor: '#6c757d',
+                        confirmButtonText: '<i class="bi bi-shield-check"></i> AMBIL TINDAKAN',
+                        cancelButtonText: 'Tutup Sementara',
+                        allowOutsideClick: false,
+                        allowEscapeKey: false
+                    }).then((result) => {
+                        // Matikan Sirine saat tombol ditekan
+                        sirenSound.pause();
+                        sirenSound.currentTime = 0;
+
+                        if (result.isConfirmed) {
+                            // Arahkan admin untuk mengubah status menjadi 'ditangani'
+                            window.location.href = `/admin/panic/resolve/${alertData.id}`;
+                        }
+                    });
+                });
+
+            console.log("Radar Darurat Aktif. Standby menunggu sinyal...");
+        @endif
+    </script>
+
+    @include('components.chatbot')
 </body>
 
 </html>
