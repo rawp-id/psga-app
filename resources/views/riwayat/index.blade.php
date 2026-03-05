@@ -1,108 +1,87 @@
 @extends('layouts.app')
+
 @section('content')
-    {{-- <div class="container mt-3">
-        <div class="card borderless shadow" style="border-radius: 15px;">
-            <div class="card-body m-4">
-                <h5 class="fw-semibold">Track Riwayat Pengaduan Terakhir</h5>
-                <hr>
-                <div class="container mt-5">
-                    <div class="d-flex justify-content-center">
-                        <div class="step-container"></div>
-                        <div class="step active">1</div>
-                        <div class="step-label">Menunggu Konfirmasi</div>
-                        <div class="line active"></div>
-                        <div class="step ">2</div>
-                        <div class="step-label">Penyelesaian Masalah</div>
-                        <div class="line"></div>
-                        <div class="step">3</div>
-                        <div class="step-label">Selesai</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div> --}}
-    <div class="container mt-5">
-        <div class="card borderless shadow" style="border-radius: 15px;">
-            <div class="card-body m-4">
-                <h5 class="fw-semibold">Riwayat</h5>
-                <hr>
-                <div class="table-responsive">
-                    <table class="table">
-                        <thead class="table-secondary">
-                            <tr>
-                                <th scope="col">No</th>
-                                <th scope="col">Layanan</th>
-                                <th scope="col">Tanggal</th>
-                                <th scope="col">Status</th>
-                                <th scope="col">Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody>
+<div class="container mt-5">
+    <div class="card border-0 shadow-sm" style="border-radius: 15px;">
+        <div class="card-body m-4">
+            <h5 class="fw-bold"><i class="bi bi-clock-history me-2"></i>Riwayat Pengajuan</h5>
+            <hr>
+            
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th scope="col" width="5%">No</th>
+                            <th scope="col">Layanan & Jenis</th>
+                            <th scope="col">Tanggal Pengajuan</th>
+                            <th scope="col">Status</th>
+                            <th scope="col" class="text-center">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @php $no = 1; @endphp
+
+                        {{-- Combined Collection or Individual Loops --}}
+                        @forelse($pelaporans->concat($pengaduans)->sortByDesc('created_at') as $item)
                             @php
-                                $no = 1;
+                                // Detect if it's Pelaporan or Pengaduan
+                                $isPelaporan = isset($item->jenis_pelaporan);
+                                $statusClasses = [
+                                    'pending' => 'text-bg-secondary',
+                                    'proses'  => 'text-bg-warning',
+                                    'selesai' => 'text-bg-success'
+                                ];
+                                $statusLabels = [
+                                    'pending' => 'Menunggu Konfirmasi',
+                                    'proses'  => 'Penyelesaian Masalah',
+                                    'selesai' => 'Selesai'
+                                ];
+                                $statusIcons = [
+                                    'pending' => 'bi-info-circle-fill',
+                                    'proses'  => 'bi-hourglass-split',
+                                    'selesai' => 'bi-check-circle-fill'
+                                ];
                             @endphp
-                            @foreach($pelaporans as $pelaporan)
-                                <tr>
-                                    <th scope="row">{{ $no++ }}</th>
-                                    <td><i class="bi bi-ui-checks"></i> Pelaporan - {{ $pelaporan->jenis_pelaporan }}</td>
-                                    <td>{{ \Carbon\Carbon::parse($pelaporan->created_at)->format('d F Y') }}</td>
-                                    <td>
-                                        @if($pelaporan->status === 'pending')
-                                            <span class="badge rounded-pill text-bg-secondary">
-                                                <i class="bi bi-info-circle-fill me-1"></i> Menunggu Konfirmasi
-                                            </span>
-                                        @elseif($pelaporan->status === 'proses')
-                                            <span class="badge rounded-pill text-bg-warning">
-                                                <i class="bi bi-hourglass-split me-1"></i> Penyelesaian Masalah
-                                            </span>
-                                        @elseif($pelaporan->status === 'selesai')
-                                            <span class="badge rounded-pill text-bg-success">
-                                                <i class="bi bi-check-circle-fill me-1"></i> Selesai
-                                            </span>
-                                        @else
-                                            <span class="badge rounded-pill text-bg-dark">
-                                                <i class="bi bi-question-circle-fill me-1"></i> Tidak Diketahui
-                                            </span>
-                                        @endif
-                                    </td>
-                                    <td>
-                                        <a href="{{ route('riwayat.showPelaporan', $pelaporan->id) }}" class="btn btn-outline-primary">Detail</a>
-                                    </td>
-                                </tr>
-                            @endforeach
-                            @foreach($pengaduans as $pengaduan)
-                                <tr>
-                                    <th scope="row">{{ $no++ }}</th>
-                                    <td><i class="bi bi-ui-checks"></i> Pengaduan</td>
-                                    <td>{{ \Carbon\Carbon::parse($pengaduan->created_at)->format('d F Y') }}</td>
-                                    <td>
-                                        @if($pengaduan->status === 'pending')
-                                            <span class="badge rounded-pill text-bg-secondary">
-                                                <i class="bi bi-info-circle-fill me-1"></i> Menunggu Konfirmasi
-                                            </span>
-                                        @elseif($pengaduan->status === 'proses')
-                                            <span class="badge rounded-pill text-bg-warning">
-                                                <i class="bi bi-hourglass-split me-1"></i> Penyelesaian Masalah
-                                            </span>
-                                        @elseif($pengaduan->status === 'selesai')
-                                            <span class="badge rounded-pill text-bg-success">
-                                                <i class="bi bi-check-circle-fill me-1"></i> Selesai
-                                            </span>
-                                        @else
-                                            <span class="badge rounded-pill text-bg-dark">
-                                                <i class="bi bi-question-circle-fill me-1"></i> Tidak Diketahui
-                                            </span>
-                                        @endif
-                                    </td>
-                                    <td>
-                                        <a href="{{ route('riwayat.showPengaduan', $pengaduan->id) }}" class="btn btn-outline-primary">Detail</a>
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
+
+                            <tr>
+                                <td>{{ $no++ }}</td>
+                                <td>
+                                    <div class="fw-semibold">
+                                        <i class="bi {{ $isPelaporan ? 'bi- megaphone' : 'bi-shield-exclamation' }} me-2 text-primary"></i>
+                                        {{ $isPelaporan ? 'Pelaporan' : 'Pengaduan' }}
+                                    </div>
+                                    <small class="text-muted">
+                                        {{ $isPelaporan ? $item->jenis_pelaporan : 'Aduan Umum' }}
+                                    </small>
+                                </td>
+                                <td>
+                                    {{ \Carbon\Carbon::parse($item->created_at)->translatedFormat('d F Y') }}
+                                </td>
+                                <td>
+                                    <span class="badge rounded-pill {{ $statusClasses[$item->status] ?? 'text-bg-dark' }}">
+                                        <i class="bi {{ $statusIcons[$item->status] ?? 'bi-question-circle' }} me-1"></i>
+                                        {{ $statusLabels[$item->status] ?? 'Tidak Diketahui' }}
+                                    </span>
+                                </td>
+                                <td class="text-center">
+                                    <a href="{{ $isPelaporan ? route('riwayat.showPelaporan', $item->id) : route('riwayat.showPengaduan', $item->id) }}" 
+                                       class="btn btn-sm btn-outline-primary px-3">
+                                        Detail
+                                    </a>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="5" class="text-center py-5 text-muted">
+                                    <i class="bi bi-folder2-open d-block mb-2" style="font-size: 2rem;"></i>
+                                    Belum ada riwayat aktivitas.
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
+</div>
 @endsection

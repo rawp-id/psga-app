@@ -227,6 +227,9 @@ class AuthController extends Controller
         if ($user) {
             if (time() - $user->otp_expired < 120) {
                 notyf()->success('OTP berhasil diverifikasi.');
+                $user->update([
+                    'number_phone_verified_at' => now(),
+                ]);
                 return redirect('/');
             } else {
                 notyf()->error('OTP sudah kadaluarsa. Silakan coba lagi.');

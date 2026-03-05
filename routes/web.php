@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\DashboardController;
 use GuzzleHttp\Middleware;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
@@ -7,6 +8,7 @@ use App\Http\Controllers\ChatController;
 use App\Http\Controllers\RiwayatController;
 use App\Http\Controllers\PelaporanController;
 use App\Http\Controllers\PengaduanController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Middleware\AdminMiddleware;
 use App\Models\Role;
 
@@ -73,6 +75,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/riwayat/pelaporan/{id}', [RiwayatController::class, 'showPelaporan'])->name('riwayat.showPelaporan');
     Route::get('/riwayat/pengaduan/{id}', [RiwayatController::class, 'showPengaduan'])->name('riwayat.showPengaduan');
 
+    Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
+    Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
+
     // Route::middleware(['role:admin'])->group(function () {
     // });
 });
@@ -102,9 +107,7 @@ Route::post('/resend-otp', [AuthController::class, 'resend_otp']);
 Route::post('/confirm-otp', [AuthController::class, 'confirm_otp']);
 
 Route::prefix('admin')->name('admin.')->middleware(AdminMiddleware::class)->group(function () {
-    Route::get('/', function () {
-        return view('admin.dashboard');
-    })->name('dashboard');
+    Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
     
     Route::resource('roles', App\Http\Controllers\Admin\RoleController::class)->except(['show']);
 

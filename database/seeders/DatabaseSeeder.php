@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\MeetingRoom;
 use App\Models\Pelaporan;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;

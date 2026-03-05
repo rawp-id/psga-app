@@ -29,6 +29,7 @@ return new class extends Migration
             $table->string('number_phone')->nullable();
             $table->string('otp')->nullable();
             $table->timestamp('otp_expired')->nullable();
+            $table->timestamp('number_phone_verified_at')->nullable();
             $table->boolean('is_admin')->default(false);
             $table->boolean('is_konsultan')->default(false);
             $table->foreignId('role_id')->nullable()->constrained('roles')->onDelete('set null');

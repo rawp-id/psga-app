@@ -24,8 +24,8 @@ return new class extends Migration
             $table->text('data_pelaporan')->nullable();
             $table->string('file_laporan')->nullable();
             $table->string('status')->default('pending');
-            $table->json('follow_up_contact')->nullable();
-            $table->string('follow_up_contact_other')->nullable();
+            // $table->json('follow_up_contact')->nullable();
+            // $table->string('follow_up_contact_other')->nullable();
             $table->timestamps();
         });
     }
