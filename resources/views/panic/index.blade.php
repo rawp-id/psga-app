@@ -1,7 +1,20 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="container py-5 d-flex flex-column align-items-center justify-content-center" style="min-height: 70vh;">
+    <div class="container d-flex flex-column align-items-center justify-content-center" style="min-height: 70vh;">
+
+        <div class="alert alert-info alert-dismissible fade show" role="alert">
+            <i class="bi bi-lightbulb-fill me-2"></i>
+            <strong>Fitur Baru:</strong> Mode Darurat kini dilengkapi dengan deteksi lokasi real-time dan notifikasi instan ke Tim Keamanan PSGA.
+            {{-- <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> --}}
+        </div>
+
+        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            <i class="bi bi-info-circle-fill me-2"></i>
+            <strong>Perhatian:</strong> Fitur ini masih dalam tahap uji coba. Mohon laporkan jika ada kesalahan.
+            {{-- <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> --}}
+        </div>
+        
         <div class="text-center mb-5">
             <h2 class="fw-bold text-danger"><i class="bi bi-shield-fill-exclamation me-2"></i>Mode Darurat</h2>
             <p class="text-muted">Tahan tombol di bawah selama 3 detik jika Anda dalam bahaya.<br>Lokasi Anda akan dikirim ke
