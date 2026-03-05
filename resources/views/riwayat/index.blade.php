@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container mt-5">
+<div class="container">
     <div class="card border-0 shadow-sm" style="border-radius: 15px;">
         <div class="card-body m-4">
             <h5 class="fw-bold"><i class="bi bi-clock-history me-2"></i>Riwayat Pengajuan</h5>
