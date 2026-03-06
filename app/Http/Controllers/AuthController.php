@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Laravel\Socialite\Facades\Socialite;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class AuthController extends Controller
 {
@@ -17,43 +18,47 @@ class AuthController extends Controller
     public function handleGoogleCallback()
     {
         try {
-            $googleUser = Socialite::driver('google')->user();
-
-            // dd($googleUser);
+            // Gunakan stateless() jika kamu sering mengalami "The state encounter an error" saat refresh
+            $googleUser = Socialite::driver('google')->stateless()->user();
 
             $email = $googleUser->getEmail();
 
-            if (!str_ends_with($email, 'uin-malang.ac.id')) {
+            $isKampusEmail = str_ends_with($email, 'uin-malang.ac.id');
+            $isSpecialEmail = ($email === 'psgamaliki@gmail.com');
 
+            // 1. Validasi Akses: Jika tidak memenuhi keduanya, tendang keluar
+            if (!$isKampusEmail && !$isSpecialEmail) {
                 notyf()->error('Hanya email kampus yang diizinkan untuk login.');
                 return redirect('/login')->withErrors(['error' => 'Hanya email kampus yang diizinkan untuk login.']);
             }
 
-            if (str_ends_with($email, 'uin-malang.ac.id')) {
+            // 2. Jika lolos validasi, cari atau buat user
+            $user = User::where('email', $email)->first();
 
-                $user = User::where('email', $email)->first();
-
-                if (!$user) {
-                    $user = User::create([
-                        'google_id' => $googleUser->getId(),
-                        'image' => $googleUser->getAvatar(),
-                        'name' => $googleUser->getName(),
-                        'email' => $email,
-                        'password' => bcrypt('password'),
-                    ]);
-                }
-
-                Auth::login($user);
-
-                if ($user->number_phone == null) {
-                    return redirect('/otp');
-                }
-
-
-                return redirect()->intended('/');
+            if (!$user) {
+                $user = User::create([
+                    'google_id' => $googleUser->getId(),
+                    'image'     => $googleUser->getAvatar(),
+                    'name'      => $googleUser->getName(),
+                    'email'     => $email,
+                    'password'  => bcrypt('password'), // Sebaiknya Str::random(16)
+                ]);
             }
+
+            // 3. Login User
+            Auth::login($user);
+
+            // 4. Cek Kelengkapan Data (OTP)
+            if (empty($user->number_phone)) {
+                return redirect('/otp');
+            }
+
+            return redirect()->intended('/');
         } catch (\Exception $e) {
-            notyf()->error('Gagal autentikasi Google');
+            // Log error untuk debug (cek di storage/logs/laravel.log)
+            Log::error('Google Auth Error: ' . $e->getMessage());
+
+            notyf()->error('Gagal autentikasi Google: ' . $e->getMessage());
             return redirect('/login')->withErrors(['error' => 'Gagal autentikasi Google']);
         }
     }

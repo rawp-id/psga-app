@@ -311,6 +311,10 @@
                     <i class="fa-solid fa-clock-rotate-left"></i> Riwayat Laporan
                 </a>
 
+                <a href="/panic-button" class="offcanvas-nav-link {{ request()->is('panic-button') ? 'active' : '' }}">
+                    <i class="fa-solid fa-triangle-exclamation"></i> Panic Button
+                </a>
+
                 @if (Auth::check() && Auth::user()->is_admin == 1)
                     <hr>
                     <a href="{{ route('admin.dashboard') }}" class="offcanvas-nav-link"

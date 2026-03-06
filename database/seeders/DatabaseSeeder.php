@@ -22,24 +22,26 @@ class DatabaseSeeder extends Seeder
         //     'email' => 'test@example.com',
         // ]);
 
-        $roles = [
-            ['name' => 'admin'],
-            ['name' => 'user'],
-        ];
+        // $roles = [
+        //     ['name' => 'admin'],
+        //     ['name' => 'user'],
+        // ];
 
-        foreach ($roles as $role) {
-            \App\Models\Role::create($role);
-        }
+        // foreach ($roles as $role) {
+        //     \App\Models\Role::create($role);
+        // }
 
         User::create([
-            'google_id' => 116200948077420596486,
-            'name' => 'Rifky Aryo',
-            'email' => '220605110052@student.uin-malang.ac.id',
-            'number_phone' => '6285794433959',
-            'otp' => rand(100000, 999999),
+            'google_id' => 100395478869342092533,
+            'image' => 'https://lh3.googleusercontent.com/a/ACg8ocJEPNHMLaJM__vHd4Xn12WTTknD2SH1Gv8FVSH7GYIkAgSKHYY=s96-c',
+            'name' => 'PSGA MALIKI ADMIN',
+            'email' => 'psgamaliki@gmail.com',
             'email_verified_at' => now(),
-            'is_admin' => true,
             'password' => bcrypt('password'),
+            'number_phone' => '085134517160',
+            'otp' => rand(100000, 999999),
+            'number_phone_verified_at' => now(),
+            'is_admin' => true,
         ]);
     }
 }

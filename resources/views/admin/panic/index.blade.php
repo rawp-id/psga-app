@@ -74,7 +74,7 @@
             </table>
         </div>
         <div class="p-3">
-            {{ $histories->links() }}
+            {{ $histories->links("pagination::bootstrap-5") }}
         </div>
     </div>
 </div>
